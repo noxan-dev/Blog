@@ -1,10 +1,10 @@
-pip==22.0.3
+
 gunicorn
 certifi
 chardet
 click
 dominate
-Flask~=2.0.2
+Flask
 Flask-Bootstrap
 Flask-CKEditor
 Flask-Gravatar
@@ -16,8 +16,8 @@ itsdangerous
 Jinja2
 MarkupSafe
 requests
-SQLAlchemy~=1.4.31
+SQLAlchemy
 urllib3
 visitor
-Werkzeug~=2.0.2
-WTForms~=3.0.1
+Werkzeug
+WTForms
