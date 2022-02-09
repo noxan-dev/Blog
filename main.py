@@ -25,7 +25,8 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-gravatar = Gravatar(app, size=100, rating='g', default='retro', force_default=False, force_lower=False, use_ssl=False, base_url=None)
+gravatar = Gravatar(app, size=100, rating='g', default='retro', force_default=False, force_lower=False, use_ssl=False,
+                    base_url=None)
 
 
 # #CONFIGURE TABLES
@@ -35,7 +36,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
     name = db.Column(db.String(100), nullable=False)
-    posts = relationship('BlogPost',  back_populates='author')
+    posts = relationship('BlogPost', back_populates='author')
     comments = relationship('Comment', back_populates='comment_author')
 
 
@@ -69,6 +70,7 @@ def admin_only(function):
         if not current_user.is_authenticated or current_user.id != 1:
             return abort(403)
         return function(*args, **kwargs)
+
     return wrapper
 
 
@@ -135,7 +137,6 @@ def logout():
 def show_post(post_id):
     form = CommentForm()
     requested_post = BlogPost.query.get(post_id)
-    all_comments = Comment.query.filter_by(post_id=post_id).all()
     if form.validate_on_submit():
         if current_user.is_authenticated:
             new_comment = Comment(text=form.comment.data, comment_author=current_user, parent_post=requested_post)

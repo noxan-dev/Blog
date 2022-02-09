@@ -42,8 +42,11 @@
               <ul class="commentList">
                 <li>
                     <div class="commenterImage">
-
+                      {% if current_user.is_authenticated %}
                       <img src="{{current_user.email | gravatar}}"/>
+                      {% else %}
+                      <img src="https://thepowerofthedream.org/wp-content/uploads/2015/09/generic-profile-picture.jpg">
+                      {% endif %}
                     </div>
                     <div class="commentText">
                       <p>{{comment.text|safe}}</p>
