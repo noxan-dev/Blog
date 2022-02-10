@@ -1,68 +1,67 @@
 {% include "header.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-  <!-- Page Header -->
-  <header class="masthead" style="background-image: url('{{post.img_url}}')">
+<!-- Page Header -->
+<header class="masthead" style="background-image: url('{{post.img_url}}')">
     <div class="overlay"></div>
     <div class="container">
-      <div class="row">
-        <div class="col-lg-8 col-md-10 mx-auto">
-          <div class="post-heading">
-            <h1>{{post.title}}</h1>
-            <h2 class="subheading">{{post.subtitle}}</h2>
-            <span class="meta">Posted by
-              <a href="#">{{post.author.name}}</a>
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="post-heading">
+                    <h1>{{post.title}}</h1>
+                    <h2 class="subheading">{{post.subtitle}}</h2>
+                    <span class="meta">Posted by
+              <a href="{{url_for('profile', user_id=post.author.id)}}">{{post.author.name}}</a>
               on {{post.date}}</span>
-          </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </header>
+</header>
 
-  <!-- Post Content -->
-  <article>
+<!-- Post Content -->
+<article>
     <div class="container">
-      <div class="row">
-        <div class="col-lg-8 col-md-10 mx-auto">
-            {{ post.body|safe }}
-          <hr>
-          {% if current_user.id == 1 %}
-            <div class="clearfix">
-            <a class="btn btn-primary float-right" href="{{url_for('edit_post', post_id=post.id)}}">Edit Post</a>
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                {{ post.body|safe }}
+                <hr>
+                {% if current_user.id == 1 %}
+                <div class="clearfix">
+                    <a class="btn btn-primary float-right" href="{{url_for('edit_post', post_id=post.id)}}">Edit
+                        Post</a>
+                </div>
+                {% endif %}
+
+                {{ ckeditor.load() }}
+                {{ ckeditor.config(name='comment') }}
+                {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+
+                <!--           Comments Area -->
+                <div class="col-lg-8 col-md-10 mx-auto comment">
+                    {% for comment in post.comments: %}
+                    <ul class="commentList">
+                        <li>
+                            <div class="commenterImage">
+                                {% if current_user.is_authenticated %}
+                                <img src="{{ comment.comment_author.email | gravatar}}"/>
+                                {% else %}
+                                <img src="https://thepowerofthedream.org/wp-content/uploads/2015/09/generic-profile-picture.jpg">
+                                {% endif %}
+                            </div>
+                            <div class="commentText">
+                                <p>{{comment.text|safe}}</p>
+                                <span class="date sub-text"><a
+                                        href="{{ url_for('profile', user_id=comment.author_id)}}">{{comment.comment_author.name}}</a></span>
+                            </div>
+                        </li>
+                    </ul>
+                    {% endfor %}
+                </div>
             </div>
-          {% endif %}
-
-          {{ ckeditor.load() }}
-          {{ ckeditor.config(name='comment') }}
-          {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
-
-<!--           Comments Area -->
-          <div class="col-lg-8 col-md-10 mx-auto comment">
-            {% for comment in post.comments: %}
-              <ul class="commentList">
-                <li>
-                    <div class="commenterImage">
-                      {% if current_user.is_authenticated %}
-                      <img src="{{current_user.email | gravatar}}"/>
-                      {% else %}
-                      <img src="https://thepowerofthedream.org/wp-content/uploads/2015/09/generic-profile-picture.jpg">
-                      {% endif %}
-                    </div>
-                    <div class="commentText">
-                      <p>{{comment.text|safe}}</p>
-                      <span class="date sub-text">{{comment.comment_author.name}}</span>
-                    </div>
-                </li>
-              </ul>
-            {% endfor %}
-            </div>
-
-
-
-          </div>
-      </div>
+        </div>
     </div>
-  </article>
+</article>
 
-  <hr>
+<hr>
 {% include "footer.html" %}

@@ -1,16 +1,17 @@
-from flask import Flask, render_template, redirect, url_for, flash, abort
+import time
+import os
+from flask import Flask, render_template, redirect, url_for, flash, abort, request
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from functools import wraps
 from datetime import date
-import time
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
-from forms import CreatePostForm, Register, Login, CommentForm
+from forms import CreatePostForm, Register, Login, CommentForm, UpdatePass
 from flask_gravatar import Gravatar
-import os
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ['SECRETEKEY']
@@ -151,14 +152,14 @@ def show_post(post_id):
     return render_template("post.html", post=requested_post, form=form)
 
 
-@app.route("/about")
+@app.route('/about')
 def about():
-    return render_template("about.html")
+    return render_template('about.html')
 
 
-@app.route("/contact")
+@app.route('/contact')
 def contact():
-    return render_template("contact.html")
+    return render_template('contact.html')
 
 
 @app.route('/new-post', methods=['GET', 'POST'])
@@ -172,15 +173,15 @@ def add_new_post():
             body=form.body.data,
             img_url=form.img_url.data,
             author=current_user,
-            date=date.today().strftime("%B %d, %Y")
+            date=date.today().strftime('%B %d, %Y')
         )
         db.session.add(new_post)
         db.session.commit()
-        return redirect(url_for("get_all_posts"))
-    return render_template("make-post.html", form=form)
+        return redirect(url_for('get_all_posts'))
+    return render_template('make-post.html', form=form)
 
 
-@app.route("/edit-post/<int:post_id>")
+@app.route('/edit-post/<int:post_id>', methods=['GET', 'POST'])
 @admin_only
 def edit_post(post_id):
     post = BlogPost.query.get(post_id)
@@ -195,15 +196,22 @@ def edit_post(post_id):
         post.title = edit_form.title.data
         post.subtitle = edit_form.subtitle.data
         post.img_url = edit_form.img_url.data
-        post.author = edit_form.author.data
+        post.author = current_user
         post.body = edit_form.body.data
         db.session.commit()
-        return redirect(url_for("show_post", post_id=post.id))
+        return redirect(url_for('show_post', post_id=post.id))
 
-    return render_template("make-post.html", form=edit_form)
+    return render_template('make-post.html', form=edit_form, is_edit=True)
 
 
-@app.route("/delete/<int:post_id>")
+@app.route('/profile/<int:user_id>', methods=['GET'])
+def profile(user_id):
+    user = User.query.get(user_id)
+    comments_made = len(user.comments)
+    return render_template('profile.html', comments_made=comments_made, user=user)
+
+
+@app.route('/delete/<int:post_id>')
 @admin_only
 def delete_post(post_id):
     post_to_delete = BlogPost.query.get(post_id)
@@ -213,4 +221,4 @@ def delete_post(post_id):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True)

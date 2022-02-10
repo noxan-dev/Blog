@@ -29,3 +29,10 @@ class Login(FlaskForm):
 class CommentForm(FlaskForm):
     comment = CKEditorField('Comment', validators=[DataRequired()])
     submit = SubmitField("Submit Comment")
+
+
+class UpdatePass(FlaskForm):
+    current_pass = PasswordField("Current Password", validators=[DataRequired()])
+    new_pass = PasswordField("New Password", validators=[DataRequired()])
+    submit = SubmitField("Change")
+

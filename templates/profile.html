@@ -1,0 +1,54 @@
+{% include "header.html" %}
+
+<!-- Page Header -->
+<header class="masthead" style="background-image: url({{ url_for('static', filename='img/profile-bg.jpg')}})">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="page-heading">
+                    <img alt="Not Found" src="{{user.email | gravatar(size=100)}}" style="border-radius: 50%;">
+                    <h2 style="padding-top: 15px;">{{ user.name }}</h2>
+                    <h3>{{ user.email }}</h3>
+                    {% if user.id == 1 %}
+                    <label class="profile-tag" style="background-color: purple;">Admin</label>
+                    {% else %}
+                    <label class="profile-tag" style="background-color: green;">Member</label>
+                    {% endif %}
+
+                    {% if comments_made > 0 %}
+                    <h4> Comments: {{ comments_made }}</h4>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            <h3>Posts:</h3>
+            <div class="card-deck">
+                {% if comments_made > 0 %}
+                {% for post in user.posts %}
+                <div class="card" style="min-width: 15rem; max-width: 15rem; margin-top: 5px;">
+                    <img alt="Card image" class="card-img-top" src="{{post.img_url}}" style="max-width: 15rem">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="card-text">{{ post.subtitle }} <br> {{ post.date }}</p>
+                        <a class="btn btn-primary" href="{{ url_for('show_post', post_id=post.id) }}">Go to post</a>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+
+
+</div>
+{% include "footer.html" %}
